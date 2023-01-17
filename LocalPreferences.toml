@@ -1,0 +1,7 @@
+[NerfGUI]
+fullscreen=false
+train=true # whether to start training by default
+n_rays=1024 # maximum number of rays in a single batch during training
+tile_size=65536 # 256 * 256 pixels
+[KAUtils]
+backend="CUDA" # Available values: ROC, CUDA
