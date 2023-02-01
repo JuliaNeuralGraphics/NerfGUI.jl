@@ -101,8 +101,8 @@ function NGUI(; gl_kwargs...)
     render_state = RenderState(; surface=GL.RenderSurface(; resolution...))
     controls = ControlSettings()
 
-    n_rays = load_preference(UUID, "n_rays")
-    tile_size = load_preference(UUID, "tile_size")
+    n_rays = load_preference(UUID, "n_rays", 1024)
+    tile_size = load_preference(UUID, "tile_size", 256*256)
 
     dataset = Nerf.Dataset(dev; config_file=datasets[1])
     camera = Nerf.Camera(MMatrix{3, 4, Float32}(I), dataset.intrinsics)
@@ -433,7 +433,7 @@ function loop!(ngui::NGUI)
 end
 
 function main()
-    if load_preference(UUID, "fullscreen")
+    if load_preference(UUID, "fullscreen", false)
         ngui = NGUI(; fullscreen=true, resizable=false)
     else
         ngui = NGUI(; width=1920, height=1080, resizable=true)
