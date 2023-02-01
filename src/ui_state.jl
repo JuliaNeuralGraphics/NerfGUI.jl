@@ -12,7 +12,7 @@ Base.@kwdef mutable struct UIState
     transforms_file::Vector{UInt8} = Vector{UInt8}(
         "Specify path to 'transforms.json' file" * "\0"^512)
 
-    train::Ref{Bool} = Ref(load_preference(UUID, "train"))
+    train::Ref{Bool} = Ref(load_preference(UUID, "train", true))
     render::Ref{Bool} = Ref(true)
 
     draw_bbox::Ref{Bool} = Ref(false)
