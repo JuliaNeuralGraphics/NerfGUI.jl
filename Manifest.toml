@@ -346,9 +346,9 @@ version = "0.1.3"
 
 [[deps.GPUCompiler]]
 deps = ["ExprTools", "InteractiveUtils", "LLVM", "Libdl", "Logging", "TimerOutputs", "UUIDs"]
-git-tree-sha1 = "48832a7cacbe56e591a7bef690c78b9d00bcc692"
+git-tree-sha1 = "95185985a5d2388c6d0fedb06181ad4ddd40e0cb"
 uuid = "61eb1bfa-7361-4325-ad38-22787b887f55"
-version = "0.17.1"
+version = "0.17.2"
 
 [[deps.Gettext_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "Libdl", "Libiconv_jll", "Pkg", "XML2_jll"]
@@ -748,7 +748,7 @@ version = "1.0.1"
 
 [[deps.Nerf]]
 deps = ["AMDGPU", "Adapt", "BSON", "CUDA", "CUDAKernels", "ChainRulesCore", "FileIO", "ImageCore", "ImageMagick", "ImageTransformations", "JSON", "JpegTurbo", "KernelAbstractions", "LinearAlgebra", "Preferences", "Quaternions", "ROCKernels", "Rotations", "StaticArrays", "Statistics", "Zygote"]
-git-tree-sha1 = "3da6ff1fd287c726da816fabf6dfed1fbc3b98ee"
+git-tree-sha1 = "7086993b30ec6bd1490b79868fd824540939d761"
 repo-rev = "main"
 repo-url = "https://github.com/JuliaNeuralGraphics/Nerf.jl.git"
 uuid = "2c86e8b6-813a-40f3-97f9-c72f78886291"
