@@ -292,7 +292,7 @@ function handle_ui!(ngui::NGUI; frame_time)
             train_max = ngui.trainer.bbox.max
             old_bbox = ngui.renderer.bbox
 
-            ngui.renderer.bbox = BBox(
+            ngui.renderer.bbox = Nerf.BBox(
                 max.(min.(new_min, old_bbox.max), train_min),
                 min.(max.(new_min, old_bbox.max), train_max))
             GL.update_corners!(ngui.bbox,
@@ -310,7 +310,7 @@ function handle_ui!(ngui::NGUI; frame_time)
             train_max = ngui.trainer.bbox.max
             old_bbox = ngui.renderer.bbox
 
-            ngui.renderer.bbox = BBox(
+            ngui.renderer.bbox = Nerf.BBox(
                 max.(min.(new_max, old_bbox.min), train_min),
                 min.(max.(new_max, old_bbox.min), train_max))
             GL.update_corners!(ngui.bbox,
