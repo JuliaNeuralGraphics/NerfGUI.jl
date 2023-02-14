@@ -6,9 +6,9 @@ project_hash = "7938522964e348c960a7ddf1299f9e3368433044"
 
 [[deps.AMDGPU]]
 deps = ["AbstractFFTs", "Adapt", "BinaryProvider", "CEnum", "ExprTools", "GPUArrays", "GPUCompiler", "HIP_jll", "LLD_jll", "LLVM", "LLVM_jll", "Libdl", "LinearAlgebra", "MacroTools", "MsgPack", "ObjectFile", "Pkg", "Preferences", "Printf", "ROCmDeviceLibs_jll", "Random", "Requires", "Setfield", "SpecialFunctions", "Statistics", "TimespanLogging", "hsa_rocr_jll", "rocBLAS_jll", "rocRAND_jll", "rocSPARSE_jll"]
-git-tree-sha1 = "9b7fb062af4bca1a6634f10ca4d77916dd453dc2"
+git-tree-sha1 = "06f51480c4fbd88edae71c7e60fd9a7362a579f2"
 uuid = "21141c5a-9bdb-4563-92ae-f87d6854732e"
-version = "0.4.7"
+version = "0.4.8"
 
 [[deps.AbstractFFTs]]
 deps = ["ChainRulesCore", "LinearAlgebra"]
@@ -748,7 +748,7 @@ version = "1.0.1"
 
 [[deps.Nerf]]
 deps = ["AMDGPU", "Adapt", "BSON", "CUDA", "CUDAKernels", "ChainRulesCore", "FileIO", "ImageCore", "ImageMagick", "ImageTransformations", "JSON", "JpegTurbo", "KernelAbstractions", "LinearAlgebra", "Preferences", "Quaternions", "ROCKernels", "Rotations", "StaticArrays", "Statistics", "Zygote"]
-git-tree-sha1 = "d5be2ba219ee793abf0b26b84a87787ba67ade45"
+git-tree-sha1 = "97e6a6b3a17473d0407a181e3c814506c5ff4758"
 repo-rev = "main"
 repo-url = "https://github.com/JuliaNeuralGraphics/Nerf.jl.git"
 uuid = "2c86e8b6-813a-40f3-97f9-c72f78886291"
@@ -846,9 +846,9 @@ version = "0.5.11"
 
 [[deps.Parsers]]
 deps = ["Dates", "SnoopPrecompile"]
-git-tree-sha1 = "946b56b2135c6c10bbb93efad8a78b699b6383ab"
+git-tree-sha1 = "6f4fbcd1ad45905a5dee3f4256fabb49aa2110c6"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "2.5.6"
+version = "2.5.7"
 
 [[deps.Pixman_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
