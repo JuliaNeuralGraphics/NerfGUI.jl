@@ -16,42 +16,37 @@ function handle_ui!(meshing_mode::MeshingMode; ngui)
     CImGui.Begin("Meshing Mode")
 
     if CImGui.CollapsingHeader("Help", CIM_HEADER)
-        CImGui.Bullet()
-        CImGui.TextWrapped(
-            "Adjust render bbox on the main screen to select region to mesh.")
-        CImGui.Bullet()
-        CImGui.TextWrapped(
-            "Note that meshing operations will block until completion.")
+        CImGui.TextWrapped("Adjust render bbox on the main screen to select region to mesh.")
+        CImGui.TextWrapped("Note that meshing operations will block until completion.")
     end
 
     CImGui.Separator()
-    CImGui.SliderFloat(
-        "Log-density threshold", meshing_mode.threshold, 0f0, 10.0f0)
+    CImGui.SliderFloat("Log-density threshold", meshing_mode.threshold, 0f0, 10.0f0)
 
-    CImGui.InputText(
-        "Save file (.obj)", pointer(meshing_mode.save_file),
+    CImGui.InputText("Save file (.obj)", pointer(meshing_mode.save_file),
         length(meshing_mode.save_file))
 
     CImGui.PushItemWidth(-150)
-    CImGui.Combo(
-        "Meshing algorithm", meshing_mode.algorithm,
+    CImGui.Combo("Meshing algorithm", meshing_mode.algorithm,
         meshing_mode.algorithm_labels, length(meshing_mode.algorithm_labels))
 
     is_mc = meshing_mode.algorithm[] == 0
     if is_mc
         CImGui.PushItemWidth(-150)
-        CImGui.Combo(
-            "Meshing resolution", meshing_mode.mc_resolution,
+        CImGui.Combo("Meshing resolution", meshing_mode.mc_resolution,
             meshing_mode.mc_resolution_labels,
             length(meshing_mode.mc_resolution_labels))
     else
         CImGui.PushItemWidth(-150)
-        CImGui.SliderInt(
-            "Subdivision count", meshing_mode.mt_subdivision,
+        CImGui.SliderInt("Subdivision count", meshing_mode.mt_subdivision,
             Int32(0), Int32(5))
     end
 
-    if CImGui.Button("Mesh & Save")
+    CImGui.BeginTable("##meshing-buttons-table", 2)
+    CImGui.TableNextRow()
+    CImGui.TableNextColumn()
+
+    if CImGui.Button("Mesh & Save", CImGui.ImVec2(-1, 0))
         save_file = unsafe_string(pointer(meshing_mode.save_file))
         endswith(lowercase(save_file), ".obj") ||
             (save_file = save_file * ".obj";)
@@ -93,18 +88,19 @@ function handle_ui!(meshing_mode::MeshingMode; ngui)
             nerf_scale=ngui.trainer.dataset.scale)
     end
 
-
-    CImGui.SameLine()
-    if CImGui.Button("Go Back")
+    CImGui.TableNextColumn()
+    if CImGui.Button("Go Back", CImGui.ImVec2(-1, 0))
         ngui.screen = MainScreen
     end
+    CImGui.EndTable()
+
     CImGui.End()
 end
 
 function loop!(meshing_mode::MeshingMode; ngui)
     frame_time = update_time!(ngui.render_state)
 
-    GL.imgui_begin(ngui.context)
+    NeuralGraphicsGL.imgui_begin(ngui.context)
     handle_ui!(meshing_mode; ngui)
 
     if !is_mouse_in_ui()
@@ -114,13 +110,13 @@ function loop!(meshing_mode::MeshingMode; ngui)
             ngui.controls, ngui.renderer.camera)
     end
 
-    GL.set_clear_color(0.2, 0.2, 0.2, 1.0)
-    GL.clear()
+    NeuralGraphicsGL.set_clear_color(0.2, 0.2, 0.2, 1.0)
+    NeuralGraphicsGL.clear()
 
     render!(ngui)
-    GL.draw(ngui.render_state.surface)
+    NeuralGraphicsGL.draw(ngui.render_state.surface)
 
-    GL.imgui_end(ngui.context)
+    NeuralGraphicsGL.imgui_end(ngui.context)
     glfwSwapBuffers(ngui.context.window)
     glfwPollEvents()
     return nothing

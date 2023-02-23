@@ -9,8 +9,7 @@ Base.@kwdef mutable struct UIState
     resolution_labels::Vector{String}
     resolution_idx::Ref{Int32} = Ref{Int32}(0)
 
-    transforms_file::Vector{UInt8} = Vector{UInt8}(
-        "Specify path to 'transforms.json' file" * "\0"^512)
+    transforms_file::Vector{UInt8} = Vector{UInt8}("\0"^512)
 
     train::Ref{Bool} = Ref(load_preference(UUID, "train", true))
     render::Ref{Bool} = Ref(true)
@@ -39,7 +38,7 @@ end
 
 function UIState(s::UIState)
     UIState(;
-        bbox_min=s.bbox_min, bbox_max=s.bbox_max,
+        dataset_idx=s.dataset_idx, bbox_min=s.bbox_min, bbox_max=s.bbox_max,
         render_modes=s.render_modes, resolutions=s.resolutions,
         resolution_labels=s.resolution_labels, datasets=s.datasets)
 end
@@ -86,4 +85,15 @@ end
 
 function red_button_end()
     CImGui.PopStyleColor(3)
+end
+
+function disabled_begin()
+    CImGui.igPushItemFlag(CImGui.ImGuiItemFlags_Disabled, true)
+    alpha = unsafe_load(CImGui.GetStyle().Alpha) * 0.5f0
+    CImGui.PushStyleVar(CImGui.ImGuiStyleVar_Alpha, alpha)
+end
+
+function disabled_end()
+    CImGui.PopStyleVar()
+    CImGui.igPopItemFlag()
 end
