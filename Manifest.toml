@@ -2,7 +2,7 @@
 
 julia_version = "1.9.0-beta4"
 manifest_format = "2.0"
-project_hash = "99cdefe15370838c89c886bf6547e7e4a4fe8918"
+project_hash = "943afb9314e0e39c183488c93c2f1c40f99062ce"
 
 [[deps.AMDGPU]]
 deps = ["AbstractFFTs", "Adapt", "BinaryProvider", "CEnum", "ExprTools", "GPUArrays", "GPUCompiler", "HIP_jll", "LLD_jll", "LLVM", "LLVM_jll", "Libdl", "LinearAlgebra", "MacroTools", "MsgPack", "ObjectFile", "Pkg", "Preferences", "Printf", "ROCmDeviceLibs_jll", "Random", "Requires", "Setfield", "SpecialFunctions", "Statistics", "TimespanLogging", "hsa_rocr_jll", "rocBLAS_jll", "rocRAND_jll", "rocSPARSE_jll"]
@@ -81,8 +81,6 @@ version = "0.4.2"
 [[deps.CImGui]]
 deps = ["CEnum", "CSyntax", "ImGuiGLFWBackend", "ImGuiOpenGL2Backend", "ImGuiOpenGLBackend", "LibCImGui", "Preferences"]
 git-tree-sha1 = "00fdeaee1d757a05cdc6545950f37e6cbcd8a866"
-repo-rev = "master"
-repo-url = "https://github.com/Gnimuc/CImGui.jl.git"
 uuid = "5d785b6c-b76f-510e-a07c-3070796c7e87"
 version = "1.82.0"
 
