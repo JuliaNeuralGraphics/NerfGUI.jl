@@ -1,14 +1,14 @@
 mutable struct OccupancyView
-    voxels::GL.Voxels
+    voxels::NeuralGraphicsGL.Voxels
     last_update_step::Int
     n_levels::Int
 end
 
-OccupancyView() = OccupancyView(GL.Voxels(Float32[]), 0, 0)
+OccupancyView() = OccupancyView(NeuralGraphicsGL.Voxels(Float32[]), 0, 0)
 
 function reset!(oc::OccupancyView)
     oc.voxels.n_voxels == 0 && oc.n_levels == 0 && return nothing
-    GL.update!(oc.voxels, Float32[])
+    NeuralGraphicsGL.update!(oc.voxels, Float32[])
     oc.n_levels = 0
     return nothing
 end
@@ -44,15 +44,15 @@ function update!(
         end
     end
 
-    GL.update!(oc.voxels, data)
+    NeuralGraphicsGL.update!(oc.voxels, data)
     oc.last_update_step = update_step
     oc.n_levels = n_levels
     return nothing
 end
 
-function GL.draw(oc::OccupancyView, projection, look_at)
-    GL.enable_blend()
-    GL.draw_instanced(oc.voxels, projection, look_at)
-    GL.disable_blend()
+function NeuralGraphicsGL.draw(oc::OccupancyView, projection, look_at)
+    NeuralGraphicsGL.enable_blend()
+    NeuralGraphicsGL.draw_instanced(oc.voxels, projection, look_at)
+    NeuralGraphicsGL.disable_blend()
     return nothing
 end
