@@ -761,7 +761,7 @@ version = "1.0.2"
 
 [[deps.Nerf]]
 deps = ["AMDGPU", "Adapt", "BSON", "CUDA", "CUDAKernels", "ChainRulesCore", "FileIO", "ImageCore", "ImageMagick", "ImageTransformations", "JSON", "JpegTurbo", "KernelAbstractions", "LinearAlgebra", "Preferences", "Quaternions", "ROCKernels", "Rotations", "StaticArrays", "Statistics", "Zygote"]
-git-tree-sha1 = "97e6a6b3a17473d0407a181e3c814506c5ff4758"
+git-tree-sha1 = "dd3f080a6249ee9c4dba8c61e479f31e8d7a894b"
 repo-rev = "main"
 repo-url = "https://github.com/JuliaNeuralGraphics/Nerf.jl.git"
 uuid = "2c86e8b6-813a-40f3-97f9-c72f78886291"
