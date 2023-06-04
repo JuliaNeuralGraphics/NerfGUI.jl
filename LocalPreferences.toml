@@ -4,4 +4,4 @@ train=false # whether to start training by default
 n_rays=1024 # maximum number of rays in a single batch during training
 tile_size=65536 # 256 * 256 pixels
 [Nerf]
-backend="ROC" # Available values: ROC, CUDA
+backend="CUDA" # Available values: ROC, CUDA

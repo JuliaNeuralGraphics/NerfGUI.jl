@@ -15,7 +15,7 @@ using StaticArrays
 using VideoIO
 
 const UUID = Base.UUID("4cbd8c4d-76eb-460a-a95f-3d783f5c44b5")
-const DEVICE = Nerf.DEVICE
+const Backend = Nerf.Backend
 
 const CIM_HEADER =
     CImGui.ImGuiTreeNodeFlags_CollapsingHeader |
@@ -86,7 +86,7 @@ function resize_callback(_, width, height)
 end
 
 function NGUI(; gl_kwargs...)
-    dev = DEVICE
+    dev = Backend
 
     NeuralGraphicsGL.init(3, 0)
     context = NeuralGraphicsGL.Context("NerfGUI"; gl_kwargs...)
@@ -151,7 +151,7 @@ function reset_ui!(ngui::NGUI)
 end
 
 function change_dataset!(ngui::NGUI)
-    dev = Nerf.get_device(ngui.renderer)
+    dev = Nerf.get_backend(ngui.renderer)
     config_file = ngui.ui_state.datasets[ngui.ui_state.dataset_idx[] + 1]
     # TODO free the old dataset before creating a new one.
     dataset = Nerf.Dataset(dev; config_file)
