@@ -16,7 +16,7 @@ function advance!(v::VideoMode, ngui)
         v.writer ≢ nothing && close_video_out!(v.writer)
     else
         k = eval(v.camera_path)
-        Nerf.set_projection!(ngui.renderer.camera, Nerf.get_rotation(k), k.t)
+        NU.set_projection!(ngui.renderer.camera, NU.get_rotation(k), k.t)
     end
     advance!(v.camera_path, get_time_step(v.camera_path, v.steps_ref[]))
 end
@@ -91,7 +91,7 @@ function handle_ui!(video_mode::VideoMode; ngui)
 
             # Open video writer stream.
             video_file = joinpath(save_dir, "out.mp4")
-            res = Nerf.get_resolution(ngui.renderer.camera)
+            res = NU.get_resolution(ngui.renderer.camera)
             video_mode.writer = open_video_out(
                 video_file, zeros(RGB{N0f8}, res[2], res[1]);
                 framerate=video_mode.framerate_ref[],

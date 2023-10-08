@@ -3,16 +3,19 @@ module NerfGUI
 using CImGui
 using CImGui.ImGuiGLFWBackend.LibGLFW
 using FileIO
-using NeuralGraphicsGL
 using ImageCore
 using ImageTransformations
 using LinearAlgebra
 using ModernGL
 using Nerf
+using NerfUtils
+using NeuralGraphicsGL
 using Preferences
 using Rotations
 using StaticArrays
 using VideoIO
+
+import NerfUtils as NU
 
 const UUID = Base.UUID("4cbd8c4d-76eb-460a-a95f-3d783f5c44b5")
 const Backend = Nerf.Backend
@@ -26,12 +29,12 @@ function is_mouse_in_ui()
 end
 
 # Extend GL a bit.
-function NeuralGraphicsGL.look_at(c::Nerf.Camera)
-    NeuralGraphicsGL.look_at(Nerf.view_pos(c), Nerf.look_at(c), -Nerf.view_up(c))
+function NeuralGraphicsGL.look_at(c::Camera)
+    NeuralGraphicsGL.look_at(NU.view_pos(c), NU.look_at(c), -NU.view_up(c))
 end
 
-function NeuralGraphicsGL.perspective(c::Nerf.Camera; near::Float32 = 0.1f0, far::Float32 = 100f0)
-    fovy = Nerf.focal2fov(c.intrinsics.resolution[2], c.intrinsics.focal[2])
+function NeuralGraphicsGL.perspective(c::Camera; near::Float32 = 0.1f0, far::Float32 = 100f0)
+    fovy = NU.focal2fov(c.intrinsics.resolution[2], c.intrinsics.focal[2])
     aspect = c.intrinsics.resolution[1] / c.intrinsics.resolution[2]
     NeuralGraphicsGL.perspective(fovy, aspect, near, far)
 end
@@ -109,9 +112,9 @@ function NGUI(; gl_kwargs...)
     tile_size = load_preference(UUID, "tile_size", 256*256)
 
     dataset = Nerf.Dataset(dev; config_file=datasets[1])
-    camera = Nerf.Camera(MMatrix{3, 4, Float32}(I), dataset.intrinsics)
-    Nerf.set_projection!(camera, Nerf.get_pose(dataset, 1)...)
-    Nerf.set_resolution!(camera; resolution...)
+    camera = Camera(MMatrix{3, 4, Float32}(I), dataset.intrinsics)
+    NU.set_projection!(camera, Nerf.get_pose(dataset, 1)...)
+    NU.set_resolution!(camera; resolution...)
 
     model = Nerf.BasicModel(Nerf.BasicField(dev))
     trainer = Nerf.Trainer(model, dataset; n_rays)
@@ -158,7 +161,7 @@ function change_dataset!(ngui::NGUI)
 
     Nerf.set_dataset!(ngui.trainer, dataset)
     Nerf.set_dataset!(ngui.renderer, dataset, ngui.trainer.cone, ngui.trainer.bbox)
-    Nerf.set_projection!(ngui.renderer.camera, Nerf.get_pose(dataset, 1)...)
+    NU.set_projection!(ngui.renderer.camera, Nerf.get_pose(dataset, 1)...)
     reset_ui!(ngui)
     return nothing
 end
@@ -340,7 +343,7 @@ function handle_ui!(ngui::NGUI; frame_time)
                     frame_filenames, length(frame_filenames),
                 )
                     vid = ngui.ui_state.selected_view[] + 1
-                    Nerf.set_projection!(
+                    NU.set_projection!(
                         ngui.renderer.camera,
                         Nerf.get_pose(ngui.trainer.dataset, vid)...)
                     ngui.render_state.need_render = true

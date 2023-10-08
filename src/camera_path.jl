@@ -1,5 +1,5 @@
 Base.@kwdef mutable struct CameraPath
-    keyframes::Vector{Nerf.CameraKeyframe} = []
+    keyframes::Vector{NU.CameraKeyframe} = []
     current_time::Float32 = 0f0
     current_step::Int64 = 0
 
@@ -7,8 +7,8 @@ Base.@kwdef mutable struct CameraPath
     line_program::NeuralGraphicsGL.ShaderProgram = NeuralGraphicsGL.get_program(NeuralGraphicsGL.Line)
 end
 
-function Base.push!(p::CameraPath, c::Nerf.Camera)
-    new_keyframe = Nerf.CameraKeyframe(c)
+function Base.push!(p::CameraPath, c::Camera)
+    new_keyframe = NU.CameraKeyframe(c)
     push!(p.keyframes, new_keyframe)
     length(p.keyframes) == 1 && return nothing
 
@@ -61,7 +61,7 @@ function eval(p::CameraPath)
     t = p.current_time
     t = t * (length(p) - 1)
     idx = floor(Int, t) + 1
-    Nerf.spline(t - floor(t), p[idx - 1], p[idx], p[idx + 1], p[idx + 2])
+    NU.spline(t - floor(t), p[idx - 1], p[idx], p[idx + 1], p[idx + 2])
 end
 
 function NeuralGraphicsGL.draw(p::CameraPath, P, L)

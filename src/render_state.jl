@@ -27,7 +27,7 @@ function update_time!(s::RenderState)
 end
 
 function handle_keyboard!(
-    controls::ControlSettings, camera::Nerf.Camera; frame_time::Real,
+    controls::ControlSettings, camera::Camera; frame_time::Real,
 )::Bool
     need_render = false
     translate_vec = zeros(MVector{3, Float32})
@@ -56,12 +56,12 @@ function handle_keyboard!(
 
     if need_render
         translate_vec .*= controls.camera_velocity * frame_time
-        Nerf.shift!(camera, translate_vec)
+        NU.shift!(camera, translate_vec)
     end
     need_render
 end
 
-function handle_mouse!(controls::ControlSettings, camera::Nerf.Camera)
+function handle_mouse!(controls::ControlSettings, camera::Camera)
     io = CImGui.GetIO()
     do_handle_mouse =
         CImGui.IsMousePosValid() &&
@@ -74,13 +74,13 @@ function handle_mouse!(controls::ControlSettings, camera::Nerf.Camera)
         δx = mouse_δ.x * controls.rotation_sensitivity
         δy = mouse_δ.y * controls.rotation_sensitivity
         if NeuralGraphicsGL.is_key_down('R') # roll
-            R = AngleAxis(δy, Nerf.view_dir(camera)...)
+            R = AngleAxis(δy, NU.view_dir(camera)...)
         else
             R = AngleAxis(δx, controls.up_vec...) *
-                AngleAxis(δy, Nerf.view_side(camera)...)
+                AngleAxis(δy, NU.view_side(camera)...)
         end
 
-        Nerf.rotate!(camera, R)
+        NU.rotate!(camera, R)
         need_render = true
     end
     need_render
