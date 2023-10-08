@@ -48,15 +48,21 @@ function add_dataset!(s::UIState, dataset::String)
 end
 
 function get_resolutions(; width::Integer, height::Integer)
+    # Round to an even number as ffmpeg requires it.
+    make_even(x) = iseven(x) ? x : x + 1
+    width, height = make_even(width), make_even(height)
+
     w, n_resolutions = 128, 5
     aspect = height / width
 
     resolutions = Tuple{Int64, Int64}[]
-    push!(resolutions, (w, ceil(Int64, w * aspect))) # TODO round to 2 or 4 as ffmpeg requires it
+    h = ceil(Int64, w * aspect)
+    push!(resolutions, (w, make_even(h)))
 
     w *= 2
     while w < width && length(resolutions) < n_resolutions
-        push!(resolutions, (w, ceil(Int64, w * aspect)))
+        h = ceil(Int64, w * aspect)
+        push!(resolutions, (w, make_even(h)))
         w *= 2
     end
     push!(resolutions, (width, height))
