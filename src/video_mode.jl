@@ -106,7 +106,7 @@ function handle_ui!(video_mode::VideoMode; ngui)
             ngui.screen = MainScreen
             video_mode.is_rendering = false
             close_video!(video_mode)
-            NeuralGraphicsGL.set_resizable_window!(ngui.context, true)
+            NGL.set_resizable_window!(ngui.context, true)
         end
 
         CImGui.TableNextColumn()
@@ -124,7 +124,7 @@ end
 function loop!(video_mode::VideoMode; ngui)
     frame_time = update_time!(ngui.render_state)
 
-    NeuralGraphicsGL.imgui_begin(ngui.context)
+    NGL.imgui_begin(ngui.context)
     handle_ui!(video_mode; ngui)
 
     if !video_mode.is_rendering && !is_mouse_in_ui()
@@ -133,14 +133,14 @@ function loop!(video_mode::VideoMode; ngui)
         ngui.render_state.need_render |= handle_mouse!(
             ngui.controls, ngui.renderer.camera)
 
-        if NeuralGraphicsGL.is_key_pressed('V'; repeat=false)
+        if NGL.is_key_pressed('V'; repeat=false)
             push!(video_mode.camera_path, ngui.renderer.camera)
             ngui.render_state.need_render = true
         end
     end
 
-    NeuralGraphicsGL.clear()
-    NeuralGraphicsGL.set_clear_color(0.2, 0.2, 0.2, 1.0)
+    NGL.clear()
+    NGL.set_clear_color(0.2, 0.2, 0.2, 1.0)
 
     if video_mode.is_rendering
         # Initial advance.
@@ -167,17 +167,17 @@ function loop!(video_mode::VideoMode; ngui)
         end
     end
     render!(ngui)
-    NeuralGraphicsGL.draw(ngui.render_state.surface)
+    NGL.draw(ngui.render_state.surface)
 
-    NeuralGraphicsGL.clear(NeuralGraphicsGL.GL_DEPTH_BUFFER_BIT)
+    NGL.clear(NGL.GL_DEPTH_BUFFER_BIT)
 
     if !video_mode.is_rendering
-        P = NeuralGraphicsGL.perspective(ngui.renderer.camera)
-        L = NeuralGraphicsGL.look_at(ngui.renderer.camera)
-        NeuralGraphicsGL.draw(video_mode.camera_path, P, L)
+        P = NGL.perspective(ngui.renderer.camera)
+        L = NGL.look_at(ngui.renderer.camera)
+        NGL.draw(video_mode.camera_path, P, L)
     end
 
-    NeuralGraphicsGL.imgui_end(ngui.context)
+    NGL.imgui_end(ngui.context)
     glfwSwapBuffers(ngui.context.window)
     glfwPollEvents()
     return nothing

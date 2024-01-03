@@ -16,6 +16,7 @@ using StaticArrays
 using VideoIO
 
 import NerfUtils as NU
+import NeuralGraphicsGL as NGL
 
 const UUID = Base.UUID("4cbd8c4d-76eb-460a-a95f-3d783f5c44b5")
 const Backend = Nerf.Backend
@@ -29,14 +30,14 @@ function is_mouse_in_ui()
 end
 
 # Extend GL a bit.
-function NeuralGraphicsGL.look_at(c::Camera)
-    NeuralGraphicsGL.look_at(NU.view_pos(c), NU.look_at(c), -NU.view_up(c))
+function NGL.look_at(c::Camera)
+    NGL.look_at(NU.view_pos(c), NU.look_at(c), -NU.view_up(c))
 end
 
-function NeuralGraphicsGL.perspective(c::Camera; near::Float32 = 0.1f0, far::Float32 = 100f0)
+function NGL.perspective(c::Camera; near::Float32 = 0.1f0, far::Float32 = 100f0)
     fovy = NU.focal2fov(c.intrinsics.resolution[2], c.intrinsics.focal[2])
-    aspect = c.intrinsics.resolution[1] / c.intrinsics.resolution[2]
-    NeuralGraphicsGL.perspective(fovy, aspect, near, far)
+    aspect::Float32 = c.intrinsics.resolution[1] / c.intrinsics.resolution[2]
+    NGL.perspective(fovy, near, far; aspect)
 end
 
 include("ui_state.jl")
@@ -53,7 +54,7 @@ include("meshing_mode.jl")
 end
 
 mutable struct NGUI
-    context::NeuralGraphicsGL.Context
+    context::NGL.Context
     trainer::Nerf.Trainer
     renderer::Nerf.Renderer
     screen::Screen
@@ -65,8 +66,8 @@ mutable struct NGUI
     render_state::RenderState
     controls::ControlSettings
 
-    bbox::NeuralGraphicsGL.BBox
-    frustum::NeuralGraphicsGL.Frustum
+    bbox::NGL.BBox
+    frustum::NGL.Frustum
     occupancy::OccupancyView
 end
 
@@ -74,7 +75,7 @@ const NGUI_REF::Ref{NGUI} = Ref{NGUI}()
 
 function resize_callback(_, width, height)
     (width == 0 || height == 0) && return nothing # Window minimized.
-    NeuralGraphicsGL.set_viewport(width, height)
+    NGL.set_viewport(width, height)
 
     isassigned(NGUI_REF) || return nothing
 
@@ -82,7 +83,7 @@ function resize_callback(_, width, height)
     update_resolutions!(ngui.ui_state; width, height)
     resolution = get_resolution(ngui.ui_state)
 
-    NeuralGraphicsGL.resize!(ngui.render_state.surface; resolution...)
+    NGL.resize!(ngui.render_state.surface; resolution...)
     Nerf.resize!(ngui.renderer; resolution...)
     ngui.render_state.need_render = true
     nothing
@@ -91,9 +92,9 @@ end
 function NGUI(; gl_kwargs...)
     dev = Backend
 
-    NeuralGraphicsGL.init(3, 0)
-    context = NeuralGraphicsGL.Context("NerfGUI"; gl_kwargs...)
-    NeuralGraphicsGL.set_resize_callback!(context, resize_callback)
+    NGL.init(3, 0)
+    context = NGL.Context("NerfGUI"; gl_kwargs...)
+    NGL.set_resize_callback!(context, resize_callback)
 
     font_file = joinpath(pkgdir(CImGui), "fonts", "Roboto-Medium.ttf")
     fonts = unsafe_load(CImGui.GetIO().Fonts)
@@ -105,7 +106,7 @@ function NGUI(; gl_kwargs...)
 
     ui_state = UIState(datasets; width=context.width, height=context.height)
     resolution = get_resolution(ui_state)
-    render_state = RenderState(; surface=NeuralGraphicsGL.RenderSurface(; resolution...))
+    render_state = RenderState(; surface=NGL.RenderSurface(; resolution...))
     controls = ControlSettings()
 
     n_rays = load_preference(UUID, "n_rays", 1024)
@@ -122,13 +123,13 @@ function NGUI(; gl_kwargs...)
 
     ui_state.bbox_min = Vector(renderer.bbox.min)
     ui_state.bbox_max = Vector(renderer.bbox.max)
-    bbox = NeuralGraphicsGL.BBox(renderer.bbox.min, renderer.bbox.max)
+    bbox = NGL.BBox(renderer.bbox.min, renderer.bbox.max)
 
     ngui = NGUI(
         context, trainer, renderer, MainScreen,
         VideoMode(), MeshingMode(),
         ui_state, render_state, controls,
-        bbox, NeuralGraphicsGL.Frustum(), OccupancyView())
+        bbox, NGL.Frustum(), OccupancyView())
     NGUI_REF[] = ngui
     ngui
 end
@@ -148,7 +149,7 @@ function reset_ui!(ngui::NGUI)
     ngui.ui_state.bbox_max = Vector(ngui.renderer.bbox.max)
 
     new_resolution = get_resolution(ngui.ui_state)
-    NeuralGraphicsGL.resize!(ngui.render_state.surface; new_resolution...)
+    NGL.resize!(ngui.render_state.surface; new_resolution...)
     Nerf.resize!(ngui.renderer; new_resolution...)
     return nothing
 end
@@ -202,12 +203,12 @@ function render!(ngui::NGUI)::Nothing
     end
 
     img = Nerf.to_gl_texture(ngui.renderer.buffer)
-    NeuralGraphicsGL.set_data!(ngui.render_state.surface, img)
+    NGL.set_data!(ngui.render_state.surface, img)
     return nothing
 end
 
 function launch!(ngui::NGUI)
-    NeuralGraphicsGL.render_loop(ngui.context) do
+    NGL.render_loop(ngui.context) do
         if ngui.screen == MainScreen
             loop!(ngui)
         elseif ngui.screen == CaptureScreen
@@ -291,7 +292,7 @@ function handle_ui!(ngui::NGUI; frame_time)
                     ngui.renderer.bbox = Nerf.BBox(
                         max.(min.(new_min, old_bbox.max), train_min),
                         min.(max.(new_min, old_bbox.max), train_max))
-                    NeuralGraphicsGL.update_corners!(ngui.bbox,
+                    NGL.update_corners!(ngui.bbox,
                         ngui.renderer.bbox.min, ngui.renderer.bbox.max)
                     ngui.render_state.need_render = true
                 end
@@ -309,7 +310,7 @@ function handle_ui!(ngui::NGUI; frame_time)
                     ngui.renderer.bbox = Nerf.BBox(
                         max.(min.(new_max, old_bbox.min), train_min),
                         min.(max.(new_max, old_bbox.min), train_max))
-                    NeuralGraphicsGL.update_corners!(ngui.bbox,
+                    NGL.update_corners!(ngui.bbox,
                         ngui.renderer.bbox.min, ngui.renderer.bbox.max)
                     ngui.render_state.need_render = true
                 end
@@ -319,7 +320,7 @@ function handle_ui!(ngui::NGUI; frame_time)
                     ngui.ui_state.resolution_labels, length(ngui.ui_state.resolutions),
                 )
                     new_resolution = get_resolution(ngui.ui_state)
-                    NeuralGraphicsGL.resize!(ngui.render_state.surface; new_resolution...)
+                    NGL.resize!(ngui.render_state.surface; new_resolution...)
                     Nerf.resize!(ngui.renderer; new_resolution...)
                     ngui.render_state.need_render = true
                 end
@@ -355,7 +356,7 @@ function handle_ui!(ngui::NGUI; frame_time)
             CImGui.TableNextColumn()
             if CImGui.Button("Capture Mode", CImGui.ImVec2(-1, 0))
                 ngui.screen = CaptureScreen
-                NeuralGraphicsGL.set_resizable_window!(ngui.context, false)
+                NGL.set_resizable_window!(ngui.context, false)
             end
 
             CImGui.TableNextColumn()
@@ -380,7 +381,7 @@ function handle_ui!(ngui::NGUI; frame_time)
                 ngui.ui_state.datasets, length(ngui.ui_state.datasets),
             )
                 change_dataset!(ngui)
-                NeuralGraphicsGL.update_corners!(ngui.bbox,
+                NGL.update_corners!(ngui.bbox,
                     ngui.renderer.bbox.min, ngui.renderer.bbox.max)
                 ngui.render_state.need_render = true
             end
@@ -421,7 +422,7 @@ end
 function loop!(ngui::NGUI)
     frame_time = update_time!(ngui.render_state)
 
-    NeuralGraphicsGL.imgui_begin(ngui.context)
+    NGL.imgui_begin(ngui.context)
     handle_ui!(ngui; frame_time)
     ngui.render_state.need_render |= handle_keyboard!(
         ngui.controls, ngui.renderer.camera; frame_time)
@@ -439,17 +440,17 @@ function loop!(ngui::NGUI)
         ngui.render_state.need_render = true
     end
 
-    NeuralGraphicsGL.clear()
-    NeuralGraphicsGL.set_clear_color(0.2, 0.2, 0.2, 1.0)
+    NGL.clear()
+    NGL.set_clear_color(0.2, 0.2, 0.2, 1.0)
     if ngui.ui_state.render[]
         render!(ngui)
-        NeuralGraphicsGL.draw(ngui.render_state.surface)
+        NGL.draw(ngui.render_state.surface)
     end
-    NeuralGraphicsGL.clear(NeuralGraphicsGL.GL_DEPTH_BUFFER_BIT)
+    NGL.clear(NGL.GL_DEPTH_BUFFER_BIT)
 
-    P = NeuralGraphicsGL.perspective(ngui.renderer.camera)
-    L = NeuralGraphicsGL.look_at(ngui.renderer.camera)
-    ngui.ui_state.draw_bbox[] && NeuralGraphicsGL.draw(ngui.bbox, P, L)
+    P = NGL.perspective(ngui.renderer.camera)
+    L = NGL.look_at(ngui.renderer.camera)
+    ngui.ui_state.draw_bbox[] && NGL.draw(ngui.bbox, P, L)
 
     if ngui.ui_state.draw_occupancy[]
         step = ngui.trainer.step
@@ -457,7 +458,7 @@ function loop!(ngui::NGUI)
             update!(ngui.occupancy, ngui.trainer.occupancy;
                 n_levels=ngui.ui_state.occupancy_n_levels[], update_step=step)
         end
-        NeuralGraphicsGL.draw(ngui.occupancy, P, L)
+        NGL.draw(ngui.occupancy, P, L)
     end
 
     if ngui.ui_state.draw_poses[]
@@ -465,13 +466,13 @@ function loop!(ngui::NGUI)
         for view_id in 1:length(dataset)
             camera = Nerf.get_pose_camera(dataset, view_id)
             camera_perspective =
-                NeuralGraphicsGL.perspective(camera; near=0.1f0, far=0.2f0) *
-                NeuralGraphicsGL.look_at(camera)
-            NeuralGraphicsGL.draw(ngui.frustum, camera_perspective, P, L)
+                NGL.perspective(camera; near=0.1f0, far=0.2f0) *
+                NGL.look_at(camera)
+            NGL.draw(ngui.frustum, camera_perspective, P, L)
         end
     end
 
-    NeuralGraphicsGL.imgui_end(ngui.context)
+    NGL.imgui_end(ngui.context)
     glfwSwapBuffers(ngui.context.window)
     glfwPollEvents()
     return nothing

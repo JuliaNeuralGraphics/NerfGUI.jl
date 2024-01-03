@@ -4,7 +4,6 @@ train=false # whether to start training by default
 n_rays=1024 # maximum number of rays in a single batch during training
 tile_size=65536 # 256 * 256 pixels
 [Nerf]
-backend="AMD" # Available values: AMD, CUDA
+backend="AMDGPU" # Available values: AMDGPU, CUDA
 [AMDGPU]
-use_devlibs_jll=true
 hard_memory_limit="80 %"

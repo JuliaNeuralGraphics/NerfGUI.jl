@@ -13,7 +13,7 @@ struct ControlSettings
 end
 
 Base.@kwdef mutable struct RenderState
-    surface::NeuralGraphicsGL.RenderSurface
+    surface::NGL.RenderSurface
     need_render::Bool = true # `true` to trigger first frame rendering
     finished_frame::Bool = false
     last_frame_time::Float64 = time()
@@ -32,24 +32,24 @@ function handle_keyboard!(
     need_render = false
     translate_vec = zeros(MVector{3, Float32})
 
-    if NeuralGraphicsGL.is_key_down('A')
+    if NGL.is_key_down('A')
         translate_vec[1] -= 1f0
         need_render = true
-    elseif NeuralGraphicsGL.is_key_down('D')
+    elseif NGL.is_key_down('D')
         translate_vec[1] += 1f0
         need_render = true
     end
-    if NeuralGraphicsGL.is_key_down('W')
+    if NGL.is_key_down('W')
         translate_vec[3] += 1f0
         need_render = true
-    elseif NeuralGraphicsGL.is_key_down('S')
+    elseif NGL.is_key_down('S')
         translate_vec[3] -= 1f0
         need_render = true
     end
-    if NeuralGraphicsGL.is_key_down('E')
+    if NGL.is_key_down('E')
         translate_vec[2] += 1f0
         need_render = true
-    elseif NeuralGraphicsGL.is_key_down('Q')
+    elseif NGL.is_key_down('Q')
         translate_vec[2] -= 1f0
         need_render = true
     end
@@ -70,10 +70,10 @@ function handle_mouse!(controls::ControlSettings, camera::Camera)
 
     need_render = false
     if do_handle_mouse
-        mouse_δ = NeuralGraphicsGL.get_mouse_delta()
+        mouse_δ = NGL.get_mouse_delta()
         δx = mouse_δ.x * controls.rotation_sensitivity
         δy = mouse_δ.y * controls.rotation_sensitivity
-        if NeuralGraphicsGL.is_key_down('R') # roll
+        if NGL.is_key_down('R') # roll
             R = AngleAxis(δy, NU.view_dir(camera)...)
         else
             R = AngleAxis(δx, controls.up_vec...) *

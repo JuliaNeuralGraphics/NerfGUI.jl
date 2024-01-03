@@ -3,8 +3,8 @@ Base.@kwdef mutable struct CameraPath
     current_time::Float32 = 0f0
     current_step::Int64 = 0
 
-    gui_lines::Vector{NeuralGraphicsGL.Line} = []
-    line_program::NeuralGraphicsGL.ShaderProgram = NeuralGraphicsGL.get_program(NeuralGraphicsGL.Line)
+    gui_lines::Vector{NGL.Line} = []
+    line_program::NGL.ShaderProgram = NGL.get_program(NGL.Line)
 end
 
 function Base.push!(p::CameraPath, c::Camera)
@@ -13,7 +13,7 @@ function Base.push!(p::CameraPath, c::Camera)
     length(p.keyframes) == 1 && return nothing
 
     from = p.keyframes[end - 1].t
-    push!(p.gui_lines, NeuralGraphicsGL.Line(from, new_keyframe.t; program=p.line_program))
+    push!(p.gui_lines, NGL.Line(from, new_keyframe.t; program=p.line_program))
     nothing
 end
 
@@ -47,7 +47,7 @@ function Base.empty!(p::CameraPath)
     p.current_time = 0f0
     p.current_step = 0
 
-    NeuralGraphicsGL.delete!.(p.gui_lines; with_program=false)
+    NGL.delete!.(p.gui_lines; with_program=false)
     empty!(p.keyframes)
     empty!(p.gui_lines)
 end
@@ -64,10 +64,10 @@ function eval(p::CameraPath)
     NU.spline(t - floor(t), p[idx - 1], p[idx], p[idx + 1], p[idx + 2])
 end
 
-function NeuralGraphicsGL.draw(p::CameraPath, P, L)
+function NGL.draw(p::CameraPath, P, L)
     isempty(p.gui_lines) && return nothing
     for l in p.gui_lines
-        NeuralGraphicsGL.draw(l, P, L)
+        NGL.draw(l, P, L)
     end
     nothing
 end

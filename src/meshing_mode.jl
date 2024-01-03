@@ -100,7 +100,7 @@ end
 function loop!(meshing_mode::MeshingMode; ngui)
     frame_time = update_time!(ngui.render_state)
 
-    NeuralGraphicsGL.imgui_begin(ngui.context)
+    NGL.imgui_begin(ngui.context)
     handle_ui!(meshing_mode; ngui)
 
     if !is_mouse_in_ui()
@@ -110,13 +110,13 @@ function loop!(meshing_mode::MeshingMode; ngui)
             ngui.controls, ngui.renderer.camera)
     end
 
-    NeuralGraphicsGL.set_clear_color(0.2, 0.2, 0.2, 1.0)
-    NeuralGraphicsGL.clear()
+    NGL.set_clear_color(0.2, 0.2, 0.2, 1.0)
+    NGL.clear()
 
     render!(ngui)
-    NeuralGraphicsGL.draw(ngui.render_state.surface)
+    NGL.draw(ngui.render_state.surface)
 
-    NeuralGraphicsGL.imgui_end(ngui.context)
+    NGL.imgui_end(ngui.context)
     glfwSwapBuffers(ngui.context.window)
     glfwPollEvents()
     return nothing
