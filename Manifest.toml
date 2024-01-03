@@ -2,7 +2,7 @@
 
 julia_version = "1.10.0"
 manifest_format = "2.0"
-project_hash = "4d9fad38f90091e31da65d1879e1e9899335c358"
+project_hash = "ecd23956cd653c61a6923f51f5c4dc328839be2b"
 
 [[deps.AMDGPU]]
 deps = ["AbstractFFTs", "Adapt", "Atomix", "CEnum", "ExprTools", "GPUArrays", "GPUCompiler", "HIP_jll", "KernelAbstractions", "LLD_jll", "LLVM", "LLVM_jll", "Libdl", "LinearAlgebra", "Pkg", "Preferences", "Printf", "ROCmDeviceLibs_jll", "Random", "Random123", "RandomNumbers", "SparseArrays", "SpecialFunctions", "Statistics", "UnsafeAtomicsLLVM", "hsa_rocr_jll"]
@@ -846,11 +846,9 @@ version = "1.0.2"
 
 [[deps.Nerf]]
 deps = ["AMDGPU", "Adapt", "BSON", "BenchmarkTools", "CUDA", "ChainRulesCore", "FileIO", "ImageCore", "ImageMagick", "ImageTransformations", "JSON", "JpegTurbo", "KernelAbstractions", "LinearAlgebra", "NerfUtils", "Preferences", "Quaternions", "Rotations", "StaticArrays", "Statistics", "Zygote"]
-git-tree-sha1 = "7447a7ad184c60859b41dcc5f696fc136a742855"
-repo-rev = "main"
-repo-url = "https://github.com/JuliaNeuralGraphics/Nerf.jl.git"
+git-tree-sha1 = "6c8d635ebfc1bf1b344eb5a7046a15aa8f12f459"
 uuid = "2c86e8b6-813a-40f3-97f9-c72f78886291"
-version = "0.1.2"
+version = "0.1.3"
 
 [[deps.NerfUtils]]
 deps = ["Adapt", "ChainRulesCore", "KernelAbstractions", "OrderedCollections", "Quaternions", "Random", "Rotations", "StaticArrays"]
